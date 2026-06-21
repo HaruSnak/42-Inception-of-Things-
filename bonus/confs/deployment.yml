@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wil-playground
+  namespace: dev # Namespace spécifié par le sujet
+  labels:
+    app: wil-playground # Étiquette de l'application
+spec:
+  replicas: 1 # Nombre de pods à déployer
+  selector:
+    matchLabels:
+      app: wil-playground # Sélecteur basé sur l'étiquette de l'application
+  template:
+    metadata:
+      labels:
+        app: wil-playground # Étiquette du pod
+    spec:
+      containers:
+      - name: wil-playground
+        image: wil42/playground:v1 # Image Docker utilisée pour le conteneur
+        ports:
+        - containerPort: 8888 # Port exposé par le conteneur

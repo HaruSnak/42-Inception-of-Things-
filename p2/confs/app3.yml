@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app3-config
+data:
+  index.html: |
+    <html>
+      <body style="background-color: #e1f5fe;">
+        <h1>Hello from app3</h1>
+      </body>
+    </html>
+
+---
+# Déploiement de l'application app3 avec 1 réplica
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3-deployment
+  labels:
+    app: app3
+spec:
+  replicas: 1 # Nombre de pods à déployer
+  selector:
+    matchLabels:
+      app: app3
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+      - name: app3-nginx
+        image: nginx:alpine # Utilisation de l'image Nginx Alpine
+        ports:
+        - containerPort: 80 # Port exposé par le conteneur
+        volumeMounts:
+          - name: html-volume
+            mountPath: /usr/share/nginx/html # Montage du ConfigMap dans le répertoire HTML de Nginx
+      volumes:
+      - name: html-volume
+        configMap:
+          name: app3-config # Nom du ConfigMap à monter
+
+---
+# Service pour exposer l'application app3
+apiVersion: v1
+kind: Service
+metadata:
+  name: app3-service
+spec:
+  selector:
+    app: app3
+  ports:
+    - protocol: TCP
+      port: 80 # Port du service
+      targetPort: 80 # Port cible sur le pod

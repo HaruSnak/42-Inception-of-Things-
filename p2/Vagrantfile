@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+	# Le sujet exige que le nom de la machine corresponde au login d'un membre de l'équipe.
+	# ENV['USER'] lit le login de la machine hôte, qui est votre login 42.
+	user = ENV['USER']
+	config.vm.box = "debian/bookworm64"
+
+	# La machine "Server"
+	config.vm.define "#{user}S" do |s|
+		s.vm.hostname = "#{user}S"
+		s.vm.network "private_network", ip: "192.168.56.110"
+		s.vm.provider "virtualbox" do |vb|
+			vb.name = "#{user}S"
+			vb.memory = 1024
+			vb.cpus = 1
+		end
+		s.vm.provision "shell", path: "scripts/setup.sh"
+	end
+
+end

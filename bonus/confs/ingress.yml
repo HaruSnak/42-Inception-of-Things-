@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wil-ingress
+  namespace: dev # Namespace spécifié par le sujet
+spec:
+  ingressClassName: traefik # Classe d'ingress utilisée
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix # Type de correspondance de chemin
+        backend:
+          service:
+            name: wil-playground-service # Service cible
+            port:
+              number: 80 # Port du service

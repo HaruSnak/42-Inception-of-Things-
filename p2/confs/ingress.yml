@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false" # Désactivation de la redirection HTTPS vers HTTP
+spec:
+  rules:
+  - host: app1.com # Règle pour le domaine app1.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app1-service # Service cible pour app1
+            port:
+              number: 80 # Port du service
+  - host: app2.com # Règle pour le domaine app2.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app2-service # Service cible pour app2
+            port:
+              number: 80 # Port du service
+  # Une règle sans champ "host" est traitée comme catch-all par Traefik (ingress controller de K3s) :
+  # tout HOST non matché par les règles précédentes aboutit ici, ce qui fait d'app3 le défaut.
+  - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: app3-service # Service cible pour app3
+              port:
+                number: 80 # Port du service

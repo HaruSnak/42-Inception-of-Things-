@@ -1,0 +1,32 @@
+Vagrant.configure("2") do |config|
+	# Le sujet exige que les noms de machines correspondent au login d'un membre de l'équipe.
+	# ENV['USER'] lit le login de la machine hôte, qui est votre login 42.
+	user = ENV['USER']
+	config.vm.box = "debian/bookworm64"
+
+	# Server défini EN PREMIER : Vagrant provisionne dans l'ordre de définition.
+	# Cela garantit que le token K3s est écrit avant que le Worker ne le lise.
+	config.vm.define "#{user}S" do |s|
+		s.vm.hostname = "#{user}S"
+		s.vm.network "private_network", ip: "192.168.56.110"
+		s.vm.provider "virtualbox" do |vb|
+			vb.name = "#{user}S"
+			vb.memory = 1024
+			vb.cpus = 1
+		end
+		s.vm.provision "shell", path: "scripts/server_setup.sh"
+	end
+
+	# La machine "Server Worker"
+	config.vm.define "#{user}SW" do |sw|
+		sw.vm.hostname = "#{user}SW"
+		sw.vm.network "private_network", ip: "192.168.56.111"
+		sw.vm.provider "virtualbox" do |vb|
+			vb.name = "#{user}SW"
+			vb.memory = 512
+			vb.cpus = 1
+		end
+		sw.vm.provision "shell", path: "scripts/worker_setup.sh"
+	end
+
+end

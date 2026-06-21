@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wil-playground-service
+  namespace: dev # Namespace spécifié par le sujet
+spec:
+  selector:
+    app: wil-playground # Sélecteur basé sur l'étiquette de l'application
+  ports:
+    - protocol: TCP
+      port: 80 # Port exposé par le service
+      targetPort: 8888 # Port cible sur le pod
+  type: ClusterIP # Type de service interne au cluster
